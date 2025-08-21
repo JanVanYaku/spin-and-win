@@ -61,6 +61,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				roulette: {
+					red: 'hsl(var(--roulette-red))',
+					black: 'hsl(var(--roulette-black))',
+					green: 'hsl(var(--roulette-green))'
+				},
+				gold: {
+					DEFAULT: 'hsl(var(--gold))',
+					dark: 'hsl(var(--gold-dark))'
 				}
 			},
 			borderRadius: {
@@ -89,6 +98,12 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			backgroundImage: {
+				'gradient-gold': 'var(--gradient-gold)',
+				'gradient-green': 'var(--gradient-green)',
+				'gradient-red': 'var(--gradient-red)',
+				'gradient-black': 'var(--gradient-black)'
 			}
 		}
 	},
