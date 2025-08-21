@@ -14,13 +14,15 @@ export const BettingGrid = ({
   getPayoutMultiplier 
 }: BettingGridProps) => {
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  const redNumbers = [1, 3, 5, 7, 9, 12];
+  const redNumbers = [1, 3, 5, 9, 12]; // Updated: 6 and 7 are now black
   
   const groups = [
     { id: '1-6', label: '1-6', multiplier: getPayoutMultiplier('1-6') },
     { id: 'Even', label: 'Even', multiplier: getPayoutMultiplier('Even') },
     { id: 'Odd', label: 'Odd', multiplier: getPayoutMultiplier('Odd') },
-    { id: '7-12', label: '7-12', multiplier: getPayoutMultiplier('7-12') }
+    { id: '7-12', label: '7-12', multiplier: getPayoutMultiplier('7-12') },
+    { id: 'Red', label: 'Red', multiplier: getPayoutMultiplier('Red') },
+    { id: 'Black', label: 'Black', multiplier: getPayoutMultiplier('Black') }
   ];
 
   return (
@@ -55,9 +57,10 @@ export const BettingGrid = ({
       </div>
 
       {/* Group betting options */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {groups.map((group) => {
           const isSelected = selectedGroups.includes(group.id);
+          const isColorBet = group.id === 'Red' || group.id === 'Black';
           
           return (
             <div key={group.id} className="relative">
@@ -69,7 +72,9 @@ export const BettingGrid = ({
                 onClick={() => onGroupSelect(group.id)}
                 className={`
                   w-full h-12 rounded-lg border-2 border-gold font-bold text-white text-sm
-                  bg-secondary transition-all duration-200 hover:bg-secondary/80 shadow-lg
+                  transition-all duration-200 hover:scale-105 shadow-lg
+                  ${isColorBet && group.id === 'Red' ? 'bg-gradient-red' : 
+                    isColorBet && group.id === 'Black' ? 'bg-gradient-black' : 'bg-secondary hover:bg-secondary/80'}
                   ${isSelected ? 'ring-4 ring-primary scale-105' : ''}
                 `}
               >

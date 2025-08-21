@@ -21,6 +21,7 @@ const Index = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [winningNumber, setWinningNumber] = useState<number | null>(null);
   const [lastBets, setLastBets] = useState<Bet[]>([]);
+  const [winningHistory, setWinningHistory] = useState<number[]>([]);
   const { toast } = useToast();
 
   // Payout multipliers based on the paytable from the images
@@ -32,7 +33,7 @@ const Index = () => {
       if ([1, 3, 5, 7, 9, 11].includes(bet)) return 2.91;
     } else {
       // Group bets
-      if (['1-6', 'Even', 'Odd', '7-12'].includes(bet)) return 1.94;
+      if (['1-6', 'Even', 'Odd', '7-12', 'Red', 'Black'].includes(bet)) return 1.94;
     }
     return 0;
   };
@@ -69,6 +70,26 @@ const Index = () => {
 
   const handleGroupSelect = (group: string) => {
     if (isSpinning) return;
+    
+    // Check for conflicting bets
+    const conflictingGroups = {
+      'Even': 'Odd',
+      'Odd': 'Even',
+      '1-6': '7-12',
+      '7-12': '1-6',
+      'Red': 'Black',
+      'Black': 'Red'
+    };
+    
+    const conflictingGroup = conflictingGroups[group as keyof typeof conflictingGroups];
+    if (conflictingGroup && selectedGroups.includes(conflictingGroup)) {
+      toast({
+        title: "Conflicting Bet",
+        description: `You cannot bet on both ${group} and ${conflictingGroup}.`,
+        variant: "destructive"
+      });
+      return;
+    }
     
     const existingBetIndex = bets.findIndex(bet => bet.type === 'group' && bet.value === group);
     const newBets = [...bets];
@@ -134,9 +155,13 @@ const Index = () => {
     let totalWin = 0;
     const winningBets: Bet[] = [];
 
+    // Add to winning history
+    setWinningHistory(prev => [winningNumber, ...prev.slice(0, 9)]); // Keep last 10 numbers
+    
     // Check winning bets
     bets.forEach(bet => {
       let isWinner = false;
+      const redNumbers = [1, 3, 5, 9, 12]; // Updated: 6 and 7 are now black
       
       if (bet.type === 'number' && bet.value === winningNumber) {
         isWinner = true;
@@ -153,6 +178,12 @@ const Index = () => {
             break;
           case 'Odd':
             isWinner = winningNumber % 2 === 1;
+            break;
+          case 'Red':
+            isWinner = redNumbers.includes(winningNumber);
+            break;
+          case 'Black':
+            isWinner = !redNumbers.includes(winningNumber);
             break;
         }
       }
@@ -228,6 +259,31 @@ const Index = () => {
             <PaytableModal />
           </div>
         </div>
+
+        {/* Winning History */}
+        {winningHistory.length > 0 && (
+          <div className="bg-card rounded-lg p-3 border border-gold/30">
+            <h3 className="text-gold text-sm font-bold mb-2 text-center">Recent Winners</h3>
+            <div className="flex gap-2 justify-center flex-wrap">
+              {winningHistory.map((num, index) => {
+                const redNumbers = [1, 3, 5, 9, 12];
+                const isRed = redNumbers.includes(num);
+                return (
+                  <div
+                    key={`${num}-${index}`}
+                    className={`
+                      w-8 h-8 rounded-full border border-gold flex items-center justify-center text-white text-xs font-bold
+                      ${isRed ? 'bg-gradient-red' : 'bg-gradient-black'}
+                      ${index === 0 ? 'ring-2 ring-gold' : ''}
+                    `}
+                  >
+                    {num}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Roulette Wheel */}
         <div className="flex justify-center">

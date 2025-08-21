@@ -18,8 +18,8 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
       const anglePerSegment = 360 / 12;
       const targetAngle = numberIndex * anglePerSegment;
       
-      // Add multiple full rotations plus the target angle
-      const finalRotation = rotation + 1440 + (360 - targetAngle); // 4 full rotations + target
+      // Add multiple full rotations plus the target angle, offset by half segment to center on number
+      const finalRotation = rotation + 1440 + (360 - targetAngle) + (anglePerSegment / 2);
       
       setRotation(finalRotation);
       
@@ -31,9 +31,9 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
   }, [isSpinning, winningNumber, rotation, onSpinComplete]);
 
   const getSegmentColor = (number: number) => {
-    // Red numbers: 1, 3, 5, 7, 9, 12
-    // Black numbers: 2, 4, 6, 8, 10, 11
-    const redNumbers = [1, 3, 5, 7, 9, 12];
+    // Red numbers: 1, 3, 5, 9, 12
+    // Black numbers: 2, 4, 6, 7, 8, 10, 11
+    const redNumbers = [1, 3, 5, 9, 12];
     return redNumbers.includes(number) ? 'bg-gradient-red' : 'bg-gradient-black';
   };
 
