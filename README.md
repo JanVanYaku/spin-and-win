@@ -1,18 +1,6 @@
-# Welcome to your Lovable project
+# Welcome to mini roulette
 
 ## Project info
-
-**URL**: https://lovable.dev/projects/01513844-0962-4934-98ff-3e84d619a0e0
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/01513844-0962-4934-98ff-3e84d619a0e0) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
@@ -24,10 +12,10 @@ Follow these steps:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone https://github.com/JanVanYaku/spin-and-win.git
 
 # Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+cd spin-and-win
 
 # Step 3: Install the necessary dependencies.
 npm i
@@ -59,12 +47,6 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/01513844-0962-4934-98ff-3e84d619a0e0) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!
 
