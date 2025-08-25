@@ -6,7 +6,8 @@ interface RouletteWheelProps {
   onSpinComplete: () => void;
 }
 
-const numbers = [12, 2, 8, 4, 5, 10, 6, 1, 7, 11, 3, 9];
+// Numbers arranged clockwise starting from 12 o'clock position
+const numbers = [12, 3, 1, 8, 5, 10, 6, 11, 7, 2, 9, 4];
 
 export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: RouletteWheelProps) => {
   const [rotation, setRotation] = useState(0);
@@ -16,12 +17,13 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
       // Calculate the angle for the winning number
       const numberIndex = numbers.indexOf(winningNumber);
       const anglePerSegment = 360 / 12;
-      // The pointer is at the top (12 o'clock position), so we need to align the winning number there
-      // Since numbers start at position 0 (12 o'clock), we need to rotate to bring the winning number to the top
+      
+      // Calculate target angle - we need to align the winning number with the ball (top pointer)
+      // Since the ball is at the top, we need to rotate so the winning number aligns with 0 degrees
       const targetAngle = numberIndex * anglePerSegment;
       
-      // Add multiple full rotations and rotate to align winning number with the top pointer
-      const finalRotation = rotation + 1440 - targetAngle;
+      // Add multiple full rotations (4 full spins) and rotate to the target
+      const finalRotation = rotation + 1440 + (360 - targetAngle);
       
       setRotation(finalRotation);
       
@@ -48,7 +50,9 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
           className="relative w-full h-full rounded-full border-4 border-gold shadow-2xl transition-transform duration-[3000ms] ease-out"
           style={{ 
             transform: `rotate(${rotation}deg)`,
-            background: 'conic-gradient(from 0deg, hsl(0 84% 60%) 0deg 30deg, hsl(0 0% 15%) 30deg 60deg, hsl(0 84% 60%) 60deg 90deg, hsl(0 0% 15%) 90deg 120deg, hsl(0 84% 60%) 120deg 150deg, hsl(0 0% 15%) 150deg 180deg, hsl(0 84% 60%) 180deg 210deg, hsl(0 0% 15%) 210deg 240deg, hsl(0 84% 60%) 240deg 270deg, hsl(0 0% 15%) 270deg 300deg, hsl(0 84% 60%) 300deg 330deg, hsl(0 0% 15%) 330deg 360deg)'
+            // Colors match betting grid: Red (1,3,5,8,10,12), Black (2,4,6,7,9,11)
+            // Starting from 12 (red), then 3 (red), 1 (red), 8 (red), 5 (red), 10 (red), 6 (black), 11 (black), 7 (black), 2 (black), 9 (black), 4 (black)
+            background: 'conic-gradient(from 0deg, hsl(0 84% 60%) 0deg 30deg, hsl(0 84% 60%) 30deg 60deg, hsl(0 84% 60%) 60deg 90deg, hsl(0 84% 60%) 90deg 120deg, hsl(0 84% 60%) 120deg 150deg, hsl(0 84% 60%) 150deg 180deg, hsl(0 0% 15%) 180deg 210deg, hsl(0 0% 15%) 210deg 240deg, hsl(0 0% 15%) 240deg 270deg, hsl(0 0% 15%) 270deg 300deg, hsl(0 0% 15%) 300deg 330deg, hsl(0 0% 15%) 330deg 360deg)'
           }}
         >
           {/* Numbers on wheel */}

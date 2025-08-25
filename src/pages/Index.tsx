@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { RouletteWheel } from '@/components/roulette/RouletteWheel';
 import { BettingGrid } from '@/components/roulette/BettingGrid';
 import { ChipSelector } from '@/components/roulette/ChipSelector';
@@ -22,6 +22,8 @@ const Index = () => {
   const [winningNumber, setWinningNumber] = useState<number | null>(null);
   const [lastBets, setLastBets] = useState<Bet[]>([]);
   const [winningHistory, setWinningHistory] = useState<number[]>([]);
+  const [autoSpinTimer, setAutoSpinTimer] = useState<NodeJS.Timeout | null>(null);
+  const [timeLeft, setTimeLeft] = useState(0);
   const { toast } = useToast();
 
   // Payout multipliers based on the paytable from the images
@@ -275,6 +277,42 @@ const Index = () => {
     setSelectedGroups(lastBets.filter(bet => bet.type === 'group').map(bet => bet.value as string));
   };
 
+  // Auto-spin timer effect
+  useEffect(() => {
+    if (!isSpinning && bets.length === 0) {
+      // Start 2-minute countdown
+      setTimeLeft(120);
+      const countdown = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            // Auto spin when timer reaches 0
+            const winNumber = Math.floor(Math.random() * 12) + 1;
+            setWinningNumber(winNumber);
+            setIsSpinning(true);
+            clearInterval(countdown);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+      setAutoSpinTimer(countdown);
+    } else {
+      // Clear timer if bets are placed or spinning
+      if (autoSpinTimer) {
+        clearInterval(autoSpinTimer);
+        setAutoSpinTimer(null);
+      }
+      setTimeLeft(0);
+    }
+
+    return () => {
+      if (autoSpinTimer) {
+        clearInterval(autoSpinTimer);
+      }
+    };
+  }, [bets.length, isSpinning]);
+
   const canSpin = bets.length > 0 && getTotalBet() <= balance;
 
   return (
@@ -288,6 +326,12 @@ const Index = () => {
             <GameRulesModal />
             <PaytableModal />
           </div>
+          {/* Auto-spin timer */}
+          {timeLeft > 0 && bets.length === 0 && (
+            <div className="mt-2 text-gold text-sm">
+              Auto-spin in: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+            </div>
+          )}
         </div>
 
         {/* Winning History */}
