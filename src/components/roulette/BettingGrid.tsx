@@ -14,7 +14,7 @@ export const BettingGrid = ({
   getPayoutMultiplier 
 }: BettingGridProps) => {
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  const redNumbers = [1, 3, 5, 9, 12]; // Updated: 6 and 7 are now black
+  const redNumbers = [1, 3, 5, 8, 10, 12]; // Updated: 6 and 7 are now black
   
   const groups = [
     { id: '1-6', label: '1-6', multiplier: getPayoutMultiplier('1-6') },

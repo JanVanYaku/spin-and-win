@@ -18,8 +18,8 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
       const anglePerSegment = 360 / 12;
       const targetAngle = numberIndex * anglePerSegment;
       
-      // Add multiple full rotations plus the target angle, offset by half segment to center on number
-      const finalRotation = rotation + 1440 + (360 - targetAngle) + (anglePerSegment / 2);
+      // Add multiple full rotations and align exactly with the winning number
+      const finalRotation = rotation + 1440 + (360 - targetAngle);
       
       setRotation(finalRotation);
       
@@ -31,9 +31,9 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
   }, [isSpinning, winningNumber, rotation, onSpinComplete]);
 
   const getSegmentColor = (number: number) => {
-    // Red numbers: 1, 3, 5, 9, 12
-    // Black numbers: 2, 4, 6, 7, 8, 10, 11
-    const redNumbers = [1, 3, 5, 9, 12];
+    // Red numbers: 1, 3, 5, 8, 10, 12
+    // Black numbers: 2, 4, 6, 7, 9, 11
+    const redNumbers = [1, 3, 5, 8, 10, 12];
     return redNumbers.includes(number) ? 'bg-gradient-red' : 'bg-gradient-black';
   };
 
@@ -51,7 +51,7 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
         >
           {/* Numbers on wheel */}
           {numbers.map((number, index) => {
-            const angle = (index * 30) - 90; // 30 degrees per segment, -90 to start at top
+            const angle = (index * 30) - 90 + 15; // 30 degrees per segment, -90 to start at top, +15 to center between colors
             return (
               <div
                 key={number}
@@ -74,8 +74,8 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
         </div>
       </div>
       
-      {/* Pointer */}
-      <div className="absolute top-2 w-0 h-0 border-l-[12px] border-r-[12px] border-b-[20px] border-l-transparent border-r-transparent border-b-gold"></div>
+      {/* Rolling Ball Pointer */}
+      <div className="absolute top-1 w-6 h-6 bg-gradient-to-br from-gray-200 to-gray-400 rounded-full border-2 border-gray-300 shadow-lg"></div>
     </div>
   );
 };

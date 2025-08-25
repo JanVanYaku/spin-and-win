@@ -148,23 +148,17 @@ const Index = () => {
   };
 
   const handleSpinComplete = () => {
-    setIsSpinning(false);
-    
     if (winningNumber === null) return;
 
-    let totalWin = 0;
-    const winningBets: Bet[] = [];
+    let totalWinnings = 0;
+    let hasWinningBets = false;
 
-    // Add to winning history
-    setWinningHistory(prev => [winningNumber, ...prev.slice(0, 9)]); // Keep last 10 numbers
-    
-    // Check winning bets
+    // Calculate winnings for each bet
     bets.forEach(bet => {
       let isWinner = false;
-      const redNumbers = [1, 3, 5, 9, 12]; // Updated: 6 and 7 are now black
       
-      if (bet.type === 'number' && bet.value === winningNumber) {
-        isWinner = true;
+      if (bet.type === 'number') {
+        isWinner = bet.value === winningNumber;
       } else if (bet.type === 'group') {
         switch (bet.value) {
           case '1-6':
@@ -180,38 +174,58 @@ const Index = () => {
             isWinner = winningNumber % 2 === 1;
             break;
           case 'Red':
+            const redNumbers = [1, 3, 5, 8, 10, 12];
             isWinner = redNumbers.includes(winningNumber);
             break;
           case 'Black':
-            isWinner = !redNumbers.includes(winningNumber);
+            const blackNumbers = [2, 4, 6, 7, 9, 11];
+            isWinner = blackNumbers.includes(winningNumber);
             break;
         }
       }
-      
+
       if (isWinner) {
-        const winAmount = bet.amount * getPayoutMultiplier(bet.value);
-        totalWin += winAmount;
-        winningBets.push(bet);
+        const multiplier = getPayoutMultiplier(bet.value);
+        totalWinnings += bet.amount * multiplier;
+        hasWinningBets = true;
       }
     });
 
-    if (totalWin > 0) {
-      setBalance(balance => balance + totalWin);
+    // Update balance and show result
+    setBalance(prev => prev + totalWinnings);
+    
+    // Get winning number details
+    const redNumbers = [1, 3, 5, 8, 10, 12];
+    const isRed = redNumbers.includes(winningNumber);
+    const isEven = winningNumber % 2 === 0;
+    const isLowRange = winningNumber >= 1 && winningNumber <= 6;
+    
+    const details = [
+      isRed ? 'Red' : 'Black',
+      isEven ? 'Even' : 'Odd',
+      isLowRange ? '1-6' : '7-12'
+    ].join(' | ');
+    
+    if (hasWinningBets) {
       toast({
-        title: "Congratulations! 🎉",
-        description: `You won ${totalWin.toFixed(2)} LSL! Winning number: ${winningNumber}`,
-        variant: "default"
+        title: "Winner!",
+        description: `Number ${winningNumber} (${details}) wins! You won $${totalWinnings}`,
       });
     } else {
       toast({
         title: "Better luck next time!",
-        description: `Winning number: ${winningNumber}. Try again!`,
-        variant: "default"
+        description: `Number ${winningNumber} (${details}) - No winning bets`,
+        variant: "destructive",
       });
     }
 
-    // Clear bets
-    handleClear();
+    // Add to history and clear bets
+    setWinningHistory(prev => [winningNumber, ...prev.slice(0, 9)]);
+    setBets([]);
+    setSelectedNumbers([]);
+    setSelectedGroups([]);
+    setIsSpinning(false);
+    setWinningNumber(null);
   };
 
   const handleClear = () => {
@@ -266,7 +280,7 @@ const Index = () => {
             <h3 className="text-gold text-sm font-bold mb-2 text-center">Recent Winners</h3>
             <div className="flex gap-2 justify-center flex-wrap">
               {winningHistory.map((num, index) => {
-                const redNumbers = [1, 3, 5, 9, 12];
+                const redNumbers = [1, 3, 5, 8, 10, 12];
                 const isRed = redNumbers.includes(num);
                 return (
                   <div
