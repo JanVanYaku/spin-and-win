@@ -11,65 +11,124 @@ The numbers are positioned in this exact order (clockwise from top):
 - **Red Numbers**: 1, 3, 5, 8, 10, 12
 - **Black Numbers**: 2, 4, 6, 7, 9, 11
 
-## Betting Categories
-1. **Single Numbers**: 1-12 (Payout: 11:1)
-2. **Color**: Red/Black (Payout: 1:1)
-3. **Even/Odd**: (Payout: 1:1)
-4. **Range**: 1-6 or 7-12 (Payout: 1:1)
+## Betting Categories & Payouts
+1. **Single Numbers**: 1-12 (Different multipliers based on frequency)
+   - Numbers 2, 4, 6: 11.64x payout
+   - Numbers 8, 10, 12: 5.82x payout
+   - Numbers 1, 3, 5, 7, 9, 11: 2.91x payout
+2. **Color**: Red/Black (1.94x payout)
+3. **Even/Odd**: (1.94x payout)
+4. **Range**: 1-6 or 7-12 (1.94x payout)
 
-## "Cheat Codes" - Prediction Strategies
+## "Cheat Codes" - Advanced Prediction Strategies
 
-### Pattern Analysis
-1. **Wheel Sectors**: 
-   - First Quarter (12, 2, 8): Contains 1 red, 2 black
-   - Second Quarter (4, 5, 10): Contains 2 red, 1 black
-   - Third Quarter (6, 1, 7): Contains 1 red, 2 black
-   - Fourth Quarter (11, 3, 9): Contains 1 red, 2 black
+### 🎯 Real Pattern Analysis
+1. **Wheel Physics Simulation**:
+   - The game uses: `finalRotation = rotation + 1440 - targetAngle`
+   - 1440° = exactly 4 full rotations before stopping
+   - The ball always stops at the TOP position (12 o'clock)
+   - Knowing the formula, you can predict the visual outcome
 
-2. **Adjacent Number Strategy**:
-   - Numbers next to each other on wheel often alternate colors
-   - Use wheel position to predict color outcomes
+2. **Pseudo-Random Number Generation**:
+   - JavaScript uses `Math.floor(Math.random() * 12) + 1`
+   - This is NOT truly random - it's based on system time seed
+   - Pattern can emerge based on timing of spins
 
-### Statistical Approaches
-1. **Hot/Cold Numbers**: Track which numbers haven't appeared recently
-2. **Color Streaks**: After 3+ consecutive reds/blacks, opposite color becomes more likely
-3. **Even/Odd Balance**: In long runs, even and odd should appear roughly equally
+### 🔥 Hot Exploitation Methods
 
-### Advanced Techniques
-1. **Sector Betting**: Bet on multiple numbers in same wheel sector
-2. **Opposite Betting**: Bet on numbers directly across from recent winners
-3. **Progressive Systems**: 
-   - Martingale: Double bet after losses on even-money bets
-   - Fibonacci: Use sequence for bet sizing
-
-### Wheel Physics Simulation
-The wheel spins with these parameters:
-- Base rotation: 1440° (4 full rotations)
-- Targeting: Exact alignment with winning number
-- Timing: 3-second spin duration
-
-### Quick Reference - Number Properties
-```
-Number | Color | Even/Odd | Range | Wheel Position
-   1   | Red   | Odd      | 1-6   | Position 7
-   2   | Black | Even     | 1-6   | Position 1
-   3   | Red   | Odd      | 1-6   | Position 10
-   4   | Black | Even     | 1-6   | Position 3
-   5   | Red   | Odd      | 1-6   | Position 4
-   6   | Black | Even     | 1-6   | Position 6
-   7   | Black | Odd      | 7-12  | Position 8
-   8   | Red   | Even     | 7-12  | Position 2
-   9   | Black | Odd      | 7-12  | Position 11
-  10   | Red   | Even     | 7-12  | Position 5
-  11   | Black | Odd      | 7-12  | Position 9
-  12   | Red   | Even     | 7-12  | Position 0
+#### Method 1: "Seed Timing Attack"
+```javascript
+// The game generates numbers with Math.random()
+// Rapid consecutive spins often follow patterns due to seed timing
+// Strategy: Spin 3 times quickly, note the sequence, predict 4th
 ```
 
-### Best Prediction Method
-1. Track last 5-10 results
-2. Look for patterns in colors and ranges
-3. Use wheel position knowledge for adjacent betting
-4. Combine multiple small bets rather than single large bets
-5. Set stop-loss limits and stick to them
+#### Method 2: "Sector Concentration"
+- Monitor which quarter of the wheel hasn't hit recently
+- Wheel sectors (3 numbers each):
+  - Sector 1: 12, 2, 8 (1 red, 2 black)
+  - Sector 2: 4, 5, 10 (1 black, 2 red) 
+  - Sector 3: 6, 1, 7 (2 black, 1 red)
+  - Sector 4: 11, 3, 9 (2 black, 1 red)
 
-**Remember**: This is still a game of chance. These strategies can improve odds but don't guarantee wins!
+#### Method 3: "Statistical Deviation Exploit"
+- Track 20+ spins for each category
+- When one category falls behind expected frequency, bet heavily on it
+- Expected frequencies per 12 spins:
+  - Red: 6 times
+  - Black: 6 times  
+  - Even: 6 times
+  - Odd: 6 times
+  - 1-6: 6 times
+  - 7-12: 6 times
+
+### 💰 Bankroll Management "Hacks"
+
+#### The "Pyramid Progression"
+1. Start with 1 unit on high-payout numbers (2, 4, 6)
+2. If lose, bet 2 units on medium-payout (8, 10, 12)
+3. If lose again, bet 4 units on low-payout (1, 3, 5, 7, 9, 11)
+4. Reset after win
+
+#### The "Color Streak Breaker"
+- After 5+ consecutive same colors, bet maximum on opposite color
+- Probability math suggests streak will break
+- Use 25% of bankroll for this bet
+
+### 🎮 Making an Unpredictable Game (Anti-Cheat)
+
+#### Server-Side Solutions:
+1. **True Random Number Generation**:
+   ```javascript
+   // Replace Math.random() with crypto.getRandomValues()
+   const array = new Uint32Array(1);
+   crypto.getRandomValues(array);
+   const winningNumber = (array[0] % 12) + 1;
+   ```
+
+2. **Variable Spin Duration**:
+   - Randomize spin time between 2-5 seconds
+   - Add random delay before number generation
+
+3. **Quantum Random APIs**:
+   - Use external quantum random number services
+   - APIs like random.org or quantum random generators
+
+4. **Multi-Layer Randomization**:
+   ```javascript
+   // Combine multiple entropy sources
+   const timeEntropy = Date.now() % 1000;
+   const mouseEntropy = lastMousePosition.x + lastMousePosition.y;
+   const cryptoEntropy = crypto.getRandomValues(new Uint32Array(1))[0];
+   const seed = timeEntropy ^ mouseEntropy ^ cryptoEntropy;
+   ```
+
+#### Client-Side Obfuscation:
+1. **Delayed Number Reveal**: Generate number server-side, only reveal after animation
+2. **Fake Spin Physics**: Show realistic wheel physics but ignore for actual result
+3. **Multiple RNG Calls**: Make several random calls, use only the last one
+
+### 🚨 Current Game Vulnerabilities
+
+1. **Predictable Math.random()**: Easy to exploit with timing
+2. **Client-side generation**: Number is generated in browser
+3. **Fixed spin duration**: 3 seconds exactly, predictable timing
+4. **No entropy mixing**: Single random source
+5. **Visible in DevTools**: Can inspect the winning number before animation ends
+
+### Quick Reference - Exploit Priority
+```
+High Value Targets (Best ROI):
+Numbers 2, 4, 6 → 11.64x payout
+- Bet when these haven't appeared in 10+ spins
+
+Medium Value:
+Numbers 8, 10, 12 → 5.82x payout  
+- Sector 2 coverage strategy
+
+Low Risk/High Frequency:
+Color bets → 1.94x payout
+- Streak breaking method
+```
+
+**⚠️ Disclaimer**: These strategies exploit the current implementation. In a real casino or properly secured game, such patterns would not exist. Use for educational purposes only!

@@ -16,10 +16,12 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
       // Calculate the angle for the winning number
       const numberIndex = numbers.indexOf(winningNumber);
       const anglePerSegment = 360 / 12;
+      // The pointer is at the top (12 o'clock position), so we need to align the winning number there
+      // Since numbers start at position 0 (12 o'clock), we need to rotate to bring the winning number to the top
       const targetAngle = numberIndex * anglePerSegment;
       
-      // Add multiple full rotations and align exactly with the winning number
-      const finalRotation = rotation + 1440 + (360 - targetAngle);
+      // Add multiple full rotations and rotate to align winning number with the top pointer
+      const finalRotation = rotation + 1440 - targetAngle;
       
       setRotation(finalRotation);
       

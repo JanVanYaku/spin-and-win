@@ -49,6 +49,13 @@ const Index = () => {
     const newBets = [...bets];
     
     if (existingBetIndex >= 0) {
+      // If already selected and clicked again, remove the bet (deselect)
+      if (selectedNumbers.includes(number)) {
+        newBets.splice(existingBetIndex, 1);
+        setSelectedNumbers(selectedNumbers.filter(n => n !== number));
+        setBets(newBets);
+        return;
+      }
       // Add to existing bet
       newBets[existingBetIndex].amount += selectedChip;
     } else {
@@ -71,6 +78,16 @@ const Index = () => {
   const handleGroupSelect = (group: string) => {
     if (isSpinning) return;
     
+    // If already selected and clicked again, remove the bet (deselect)
+    const existingBetIndex = bets.findIndex(bet => bet.type === 'group' && bet.value === group);
+    if (existingBetIndex >= 0 && selectedGroups.includes(group)) {
+      const newBets = [...bets];
+      newBets.splice(existingBetIndex, 1);
+      setSelectedGroups(selectedGroups.filter(g => g !== group));
+      setBets(newBets);
+      return;
+    }
+    
     // Check for conflicting bets
     const conflictingGroups = {
       'Even': 'Odd',
@@ -91,7 +108,6 @@ const Index = () => {
       return;
     }
     
-    const existingBetIndex = bets.findIndex(bet => bet.type === 'group' && bet.value === group);
     const newBets = [...bets];
     
     if (existingBetIndex >= 0) {
