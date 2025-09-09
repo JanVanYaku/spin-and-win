@@ -6,8 +6,8 @@ interface RouletteWheelProps {
   onSpinComplete: () => void;
 }
 
-// Numbers arranged clockwise starting from 12 o'clock position
-const numbers = [12, 3, 1, 8, 5, 10, 6, 11, 7, 2, 9, 4];
+// Numbers arranged clockwise starting from 12 o'clock position with alternating colors
+const numbers = [12, 7, 3, 11, 1, 6, 8, 2, 5, 9, 10, 4];
 
 export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: RouletteWheelProps) => {
   const [rotation, setRotation] = useState(0);
@@ -82,17 +82,17 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
                 );
               })}
               
-              {/* Numbers on wheel */}
+              {/* Numbers on wheel - positioned but don't rotate with wheel */}
               {numbers.map((number, index) => {
                 const angle = (index * 30) + 15; // Center of each segment
                 return (
                   <div
                     key={`number-${number}`}
-                    className="absolute text-white font-bold text-lg drop-shadow-lg"
+                    className="absolute text-white font-bold text-lg drop-shadow-lg z-10"
                     style={{
                       top: '50%',
                       left: '50%',
-                      transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-110px) rotate(${-angle}deg)`
+                      transform: `translate(-50%, -50%) rotate(${angle - rotation}deg) translateY(-110px)`
                     }}
                   >
                     {number}
@@ -109,16 +109,16 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
         </div>
         
         {/* Ball - positioned to fall into winning pocket */}
-        {winningNumber !== null && (
-          <div 
-            className="absolute w-4 h-4 bg-gradient-to-br from-white to-gray-300 rounded-full border border-gray-400 shadow-lg transition-all duration-[3000ms] ease-out z-10"
-            style={{
-              top: '50%',
-              left: '50%',
-              transform: `translate(-50%, -50%) rotate(${(numbers.indexOf(winningNumber) * 30) + 15}deg) translateY(-120px)`
-            }}
-          />
-        )}
+        <div 
+          className={`absolute w-5 h-5 bg-gradient-to-br from-white via-gray-100 to-gray-300 rounded-full border-2 border-gray-600 shadow-2xl z-30 transition-all duration-[3000ms] ease-out ${winningNumber !== null ? 'animate-pulse' : ''}`}
+          style={{
+            top: '50%',
+            left: '50%',
+            transform: winningNumber !== null 
+              ? `translate(-50%, -50%) rotate(${(numbers.indexOf(winningNumber) * 30) + 15}deg) translateY(-125px)`
+              : `translate(-50%, -50%) rotate(0deg) translateY(-125px)`
+          }}
+        />
         
         {/* Static pointer at top */}
         <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-20">
