@@ -43,45 +43,88 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
 
   return (
     <div className="relative flex items-center justify-center">
-      {/* Wheel container */}
-      <div className="relative w-64 h-64">
-        {/* Wheel */}
-        <div 
-          className="relative w-full h-full rounded-full border-4 border-gold shadow-2xl transition-transform duration-[3000ms] ease-out"
-          style={{ 
-            transform: `rotate(${rotation}deg)`,
-            // Colors match betting grid: Red (1,3,5,8,10,12), Black (2,4,6,7,9,11)
-            // Starting from 12 (red), then 3 (red), 1 (red), 8 (red), 5 (red), 10 (red), 6 (black), 11 (black), 7 (black), 2 (black), 9 (black), 4 (black)
-            background: 'conic-gradient(from 0deg, hsl(0 84% 60%) 0deg 30deg, hsl(0 84% 60%) 30deg 60deg, hsl(0 84% 60%) 60deg 90deg, hsl(0 84% 60%) 90deg 120deg, hsl(0 84% 60%) 120deg 150deg, hsl(0 84% 60%) 150deg 180deg, hsl(0 0% 15%) 180deg 210deg, hsl(0 0% 15%) 210deg 240deg, hsl(0 0% 15%) 240deg 270deg, hsl(0 0% 15%) 270deg 300deg, hsl(0 0% 15%) 300deg 330deg, hsl(0 0% 15%) 330deg 360deg)'
-          }}
-        >
-          {/* Numbers on wheel */}
-          {numbers.map((number, index) => {
-            const angle = (index * 30) - 90 + 15; // 30 degrees per segment, -90 to start at top, +15 to center between colors
-            return (
-              <div
-                key={number}
-                className="absolute w-6 h-6 flex items-center justify-center text-white font-bold text-sm"
-                style={{
-                  top: '50%',
-                  left: '50%',
-                  transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-90px) rotate(${-angle}deg)`
-                }}
-              >
-                {number}
-              </div>
-            );
-          })}
+      {/* Outer rim */}
+      <div className="relative w-72 h-72 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 p-2">
+        {/* Wheel container */}
+        <div className="relative w-full h-full rounded-full bg-gradient-to-br from-amber-700 to-amber-900 p-1">
+          {/* Inner wheel with pockets */}
+          <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-gold">
+            {/* Wheel segments with pockets */}
+            <div 
+              className="relative w-full h-full rounded-full transition-transform duration-[3000ms] ease-out"
+              style={{ transform: `rotate(${rotation}deg)` }}
+            >
+              {numbers.map((number, index) => {
+                const angle = (index * 30); // 30 degrees per segment
+                const redNumbers = [1, 3, 5, 8, 10, 12];
+                const isRed = redNumbers.includes(number);
+                
+                return (
+                  <div
+                    key={number}
+                    className="absolute w-full h-full"
+                    style={{
+                      transform: `rotate(${angle}deg)`,
+                      clipPath: 'polygon(50% 50%, 50% 0%, 56.7% 25%)'
+                    }}
+                  >
+                    {/* Pocket segment */}
+                    <div 
+                      className={`w-full h-full ${isRed ? 'bg-gradient-to-r from-red-600 to-red-700' : 'bg-gradient-to-r from-gray-800 to-gray-900'}`}
+                    />
+                    
+                    {/* Pocket border lines */}
+                    <div 
+                      className="absolute inset-0 border-r-2 border-gold"
+                      style={{ transformOrigin: '0 50%' }}
+                    />
+                  </div>
+                );
+              })}
+              
+              {/* Numbers on wheel */}
+              {numbers.map((number, index) => {
+                const angle = (index * 30) + 15; // Center of each segment
+                return (
+                  <div
+                    key={`number-${number}`}
+                    className="absolute text-white font-bold text-lg drop-shadow-lg"
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-110px) rotate(${-angle}deg)`
+                    }}
+                  >
+                    {number}
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Center hub */}
+            <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full border-4 border-gold transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center shadow-xl">
+              <div className="w-3 h-3 bg-gray-800 rounded-full"></div>
+            </div>
+          </div>
         </div>
         
-        {/* Center circle */}
-        <div className="absolute top-1/2 left-1/2 w-12 h-12 bg-gray-200 rounded-full border-4 border-gold transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-          <div className="w-2 h-2 bg-roulette-black rounded-full"></div>
+        {/* Ball - positioned to fall into winning pocket */}
+        {winningNumber !== null && (
+          <div 
+            className="absolute w-4 h-4 bg-gradient-to-br from-white to-gray-300 rounded-full border border-gray-400 shadow-lg transition-all duration-[3000ms] ease-out z-10"
+            style={{
+              top: '50%',
+              left: '50%',
+              transform: `translate(-50%, -50%) rotate(${(numbers.indexOf(winningNumber) * 30) + 15}deg) translateY(-120px)`
+            }}
+          />
+        )}
+        
+        {/* Static pointer at top */}
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-20">
+          <div className="w-0 h-0 border-l-4 border-r-4 border-b-6 border-l-transparent border-r-transparent border-b-gold"></div>
         </div>
       </div>
-      
-      {/* Rolling Ball Pointer */}
-      <div className="absolute top-1 w-6 h-6 bg-gradient-to-br from-gray-200 to-gray-400 rounded-full border-2 border-gray-300 shadow-lg"></div>
     </div>
   );
 };
